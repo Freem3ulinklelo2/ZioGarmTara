@@ -1,7 +1,6 @@
 import requests
 import json
 from collections import defaultdict
-import urllib.parse
 
 # JSON URL
 JSON_URL = "https://playify.pages.dev/Ziotv.json"
@@ -73,7 +72,7 @@ def create_m3u_with_cookies(categories):
             drm_license = channel.get('drmLicense', '')
             
             # EXTINF line with all metadata
-            extinf_parts = [f'#EXTINF:-1']
+            extinf_parts = ['#EXTINF:-1']
             
             # Add tvg-logo
             if logo:
@@ -89,13 +88,9 @@ def create_m3u_with_cookies(categories):
             if cookie:
                 # Clean cookie string
                 cookie_clean = cookie.replace('"', '').strip()
-                m3u_content += f'#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n'
-                m3u_content += f'#EXTVLCOPT:http-referrer=https://www.jiocinema.com/\n'
+                m3u_content += '#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n'
+                m3u_content += '#EXTVLCOPT:http-referrer=https://www.jiocinema.com/\n'
                 m3u_content += f'#EXTVLCOPT:http-cookie={cookie_clean}\n'
-            
-            # Add DRM info as comment (for reference)
-            if drm_scheme and drm_license:
-                m3u_content += f'#EXTHTTP:{"drm-scheme":"{drm_scheme}","drm-license":"{drm_license}"}\n'
             
             # Add stream URL
             m3u_content += f'{link}\n\n'
