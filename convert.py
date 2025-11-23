@@ -109,10 +109,10 @@ def main():
     print("📝 Creating M3U playlist (JioTV format)...")
     m3u_content = create_m3u_playlist(categories)
     
-    with open('playlist.m3u', 'w', encoding='utf-8') as f:
+    with open('ZioGarmTara.m3u', 'w', encoding='utf-8') as f:
         f.write(m3u_content)
     
-    print(f"✅ Playlist created: playlist.m3u")
+    print(f"✅ Playlist created: ZioGarmTara.m3u")
     print(f"📊 Total channels: {len(data)}")
     print(f"📺 Format: JioTV compatible with DRM support")
     print("")
