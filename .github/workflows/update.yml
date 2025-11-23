@@ -1,1 +1,36 @@
+name: Update M3U Playlist
 
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Har 6 ghante mein run hoga
+  workflow_dispatch:  # Manual bhi run kar sakte ho
+  push:
+    branches:
+      - main
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        pip install requests
+        
+    - name: Run conversion script
+      run: python convert.py
+      
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add playlist.m3u
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update playlist - $(date +'%Y-%m-%d %H:%M:%S')" && git push)
