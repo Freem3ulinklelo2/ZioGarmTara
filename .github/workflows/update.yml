@@ -32,5 +32,5 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add playlist.m3u
+        git add ZioGarmTara.m3u
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update playlist - $(date +'%Y-%m-%d %H:%M:%S')" && git push)
