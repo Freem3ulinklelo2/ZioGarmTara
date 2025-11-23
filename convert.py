@@ -20,25 +20,22 @@ def categorize_channels(channels):
     categories = defaultdict(list)
     
     for channel in channels:
-        # Channel ka naam
         name = channel.get('name', 'Unknown')
-        
-        # Category detect karo naam se
         name_lower = name.lower()
         
-        if any(x in name_lower for x in ['sport', 'cricket', 'football', 'tennis', 'fifa', 'espn', 'euro', 'kabaddi', 'hockey']):
+        if any(x in name_lower for x in ['sport', 'cricket', 'football', 'tennis', 'fifa', 'espn', 'euro', 'kabaddi', 'hockey', 'wwe', 'f1', 'moto']):
             category = 'Sports'
-        elif any(x in name_lower for x in ['kids', 'cartoon', 'pogo', 'nick', 'disney', 'hungama', 'sonic']):
+        elif any(x in name_lower for x in ['kids', 'cartoon', 'pogo', 'nick', 'disney', 'hungama', 'sonic', 'discovery kids']):
             category = 'Kids'
-        elif any(x in name_lower for x in ['movie', 'cinema', 'gold', 'max', 'flix', 'pictures', 'film']):
+        elif any(x in name_lower for x in ['movie', 'cinema', 'gold', 'max', 'flix', 'pictures', 'film', 'action', 'classic']):
             category = 'Movies'
-        elif any(x in name_lower for x in ['news', 'aaj tak', 'ndtv', 'abp', 'india today', 'republic', 'times now', 'news18']):
+        elif any(x in name_lower for x in ['news', 'aaj tak', 'ndtv', 'abp', 'india today', 'republic', 'times now', 'news18', 'cnbc', 'zee news']):
             category = 'News'
-        elif any(x in name_lower for x in ['music', 'mtv', '9xm', 'zoom', 'bindass']):
+        elif any(x in name_lower for x in ['music', 'mtv', '9xm', 'zoom', 'bindass', 'b4u']):
             category = 'Music'
         elif any(x in name_lower for x in ['bhakti', 'spiritual', 'religious', 'aastha', 'sanskar']):
             category = 'Religious'
-        elif any(x in name_lower for x in ['hd', 'plus', 'colors', 'zee', 'star', 'sony', 'sab', '&tv', 'rishtey', 'utsav']):
+        elif any(x in name_lower for x in ['hd', 'plus', 'colors', 'zee', 'star', 'sony', 'sab', '&tv', 'rishtey', 'utsav', 'life ok']):
             category = 'Entertainment'
         else:
             category = 'Others'
@@ -47,11 +44,10 @@ def categorize_channels(channels):
     
     return categories
 
-def create_m3u_with_cookies(categories):
-    """M3U playlist banata hai with cookies and headers"""
-    m3u_content = "#EXTM3U x-tvg-url=\"\"\n\n"
+def create_m3u_playlist(categories):
+    """M3U playlist banata hai - Tivimate/OTT Navigator compatible"""
+    m3u_content = '#EXTM3U x-tvg-url=""\n\n'
     
-    # Category order
     category_order = ['Entertainment', 'Movies', 'Sports', 'Kids', 'News', 'Music', 'Religious', 'Others']
     
     for category in category_order:
@@ -59,8 +55,6 @@ def create_m3u_with_cookies(categories):
             continue
             
         channels = categories[category]
-        
-        # Category header
         m3u_content += f"# ===== {category.upper()} ({len(channels)} Channels) =====\n\n"
         
         for channel in channels:
@@ -71,28 +65,26 @@ def create_m3u_with_cookies(categories):
             drm_scheme = channel.get('drmScheme', '')
             drm_license = channel.get('drmLicense', '')
             
-            # EXTINF line with all metadata
-            extinf_parts = ['#EXTINF:-1']
+            # Basic EXTINF line
+            m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{category}",{name}\n'
             
-            # Add tvg-logo
-            if logo:
-                extinf_parts.append(f'tvg-logo="{logo}"')
-            
-            # Add group-title
-            extinf_parts.append(f'group-title="{category}"')
-            
-            # Join all parts
-            m3u_content += ' '.join(extinf_parts) + f',{name}\n'
-            
-            # Add cookies and headers as #EXTVLCOPT
+            # Add HTTP headers for compatible players
             if cookie:
-                # Clean cookie string
                 cookie_clean = cookie.replace('"', '').strip()
-                m3u_content += '#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36\n'
-                m3u_content += '#EXTVLCOPT:http-referrer=https://www.jiocinema.com/\n'
+                m3u_content += f'#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36\n'
                 m3u_content += f'#EXTVLCOPT:http-cookie={cookie_clean}\n'
             
-            # Add stream URL
+            # Add Kodiprop for Kodi users (alternative format)
+            if cookie:
+                cookie_clean = cookie.replace('"', '').strip()
+                m3u_content += f'#KODIPROP:inputstream.adaptive.license_type=clearkey\n'
+                m3u_content += f'#KODIPROP:inputstream.adaptive.stream_headers=Cookie={cookie_clean}\n'
+            
+            # Add DRM info as metadata (for reference)
+            if drm_scheme:
+                m3u_content += f'#EXTGRP:{category}\n'
+            
+            # Stream URL
             m3u_content += f'{link}\n\n'
     
     return m3u_content
@@ -110,20 +102,22 @@ def main():
     print("📂 Categorizing channels...")
     categories = categorize_channels(data)
     
-    # Category count print karo
     for category, channels in sorted(categories.items()):
         print(f"   {category}: {len(channels)} channels")
     
-    print("📝 Creating M3U playlist with cookies...")
-    m3u_content = create_m3u_with_cookies(categories)
+    print("📝 Creating M3U playlist...")
+    m3u_content = create_m3u_playlist(categories)
     
-    # File save karo
     with open('playlist.m3u', 'w', encoding='utf-8') as f:
         f.write(m3u_content)
     
     print(f"✅ Playlist created: playlist.m3u")
     print(f"📊 Total channels: {len(data)}")
-    print(f"🍪 Cookies included!")
+    print(f"🍪 Cookies and headers included!")
+    print("")
+    print("⚠️  IMPORTANT:")
+    print("   These streams require DRM support.")
+    print("   Use: Tivimate Pro, OTT Navigator, or IPTV Smarters Pro")
 
 if __name__ == "__main__":
     main()
