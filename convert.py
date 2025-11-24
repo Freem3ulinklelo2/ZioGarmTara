@@ -78,7 +78,7 @@ def create_m3u_playlist(categories):
                 m3u_content += f'#KODIPROP:inputstream.adaptive.license_key={drm_license}\n'
             
             # User-Agent (proper JioTV format)
-            m3u_content += '#EXTVLCOPT:http-user-agent=plaYtv/7.1.3 (Linux;Android 13) ygx/69.1 ExoPlayerLib/824.0\n'
+            m3u_content += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0\n'
             
             # Cookie in EXTHTTP format
             if cookie:
