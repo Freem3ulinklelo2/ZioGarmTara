@@ -1,6 +1,10 @@
 #EXTM3U
 #EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"
 
+#EXTINF:-1 group-title="Entertainment" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
+
 #EXTINF:-1 group-title="Entertainment" tvg-logo="https://img.media.jio.com/tvpimages/66/40/302084_1753189751700_l_high.jpg",Star Plus
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=3bba2ffaf08b501796c5d9eb431460a4:7a62074c4c46f3b153259526481c02bf
@@ -715,6 +719,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Asianet_HD_BTS/output/index.mpd
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/Prarthana_Life_BTS/output/index.mpd
 
+#EXTINF:-1 group-title="Movies" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
+
 #EXTINF:-1 group-title="Movies" tvg-logo="https://img.media.jio.com/tvpimages/11/79/302083_1753198669731_l_high.jpg",Star Gold
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=940a0a4080f553cab03ec23a2e80cf7c:b162354170b54cb588182eb75681cac0
@@ -1044,6 +1052,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Asianet_Movies_HD_BTS/output/index.mpd
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/Hiff_Movies_BTS/output/index.mpd
 
+#EXTINF:-1 group-title="Sports" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
+
 #EXTINF:-1 group-title="Sports" tvg-logo="https://img.media.jio.com/tvpimages/13/81/302112_1749665154709_l_high.jpg",Star Sports 1 Hindi
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=8ea9b607549252068e260a5f4d7dd321:350c0aaffedf51cc1502e9543c7c885e
@@ -1219,6 +1231,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Dsports_HD_BTS/output/index.mpd
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/AWSN_BTS/output/index.mpd
 
+#EXTINF:-1 group-title="Kids" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
+
 #EXTINF:-1 group-title="Kids" tvg-logo="https://img.media.jio.com/tvpimages/1/35/302071_1753185243638_l_high.jpg",Disney
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=5181d3e6698055578cedc5bfc86b3e56:3dca7917d8cf9bb7095dc72b48bdcd3c
@@ -1386,6 +1402,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Pogo_Hindi_BTS/output/index.mpd
 #EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/Cartoon_Network_Hindi_BTS/output/index.mpd
+
+#EXTINF:-1 group-title="News" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
 
 #EXTINF:-1 group-title="News" tvg-logo="https://img.media.jio.com/tvpimages/0/56/302063_1753182950744_l_high.jpg",VACC 24 News
 #KODIPROP:inputstream.adaptive.license_type=clearkey
@@ -2836,6 +2856,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Nation_Star_News_BTS/output/index.mpd
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/Ten_News_BTS/output/index.mpd
 
+#EXTINF:-1 group-title="Music" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
+
 #EXTINF:-1 group-title="Music" tvg-logo="https://img.media.jio.com/tvpimages/80/40/301996_1753183284182_l_high.jpg",Star Maa Music
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=80cfb1a6a4b251dd9b9ae92782a35917:b4cd88f5d71fe94993dd3476cdd63f33
@@ -3032,6 +3056,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Only_Music_BTS/output/index.mpd
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/Tarang_Music_BTS/output/index.mpd
 
+#EXTINF:-1 group-title="Religious" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
+
 #EXTINF:-1 group-title="Religious" tvg-logo="https://img.media.jio.com/imagespublic/17/63/Aastha_1570454431609_tv.jpg",Aastha
 #KODIPROP:inputstream.adaptive.license_type=clearkey
 #KODIPROP:inputstream.adaptive.license_key=177a4826f7395b3cbcc7c6f94f495f52:db77e50ed2b92483b416f914e1e118df
@@ -3150,6 +3178,10 @@ https://jiotvbpkmob.cdn.jio.com/bpk-tv/Adhya_Bhakti_BTS/output/index.mpd
 #EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
 #EXTHTTP:{"cookie":"__hdnea__=st=1764016207~exp=1764102607~acl=/*~hmac=92e452f868b79029080d714958ca252bd61c08d9c9eb829f1f6181cd2d4bd60d"}
 https://jiotvbpkmob.cdn.jio.com/bpk-tv/Bhakti_Dhara_BTS/output/index.mpd
+
+#EXTINF:-1 group-title="Others" tvg-logo="https://sflex07.fun/StreamFlexLogo.png",StreamFlex+
+#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0
+https://sflex07.fun/StreamFlexTG.ts
 
 #EXTINF:-1 group-title="Others" tvg-logo="https://img.media.jio.com/tvpimages/33/63/301997_1753204388486_l_high.jpg",Vijay Super
 #KODIPROP:inputstream.adaptive.license_type=clearkey
