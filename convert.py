@@ -52,10 +52,23 @@ def create_m3u_playlist(categories):
     
     category_order = ['Entertainment', 'Movies', 'Sports', 'Kids', 'News', 'Music', 'Religious', 'Others']
     
+    # StreamFlex+ channel details
+    streamflex_channel = {
+        'name': 'StreamFlex+',
+        'logo': 'https://sflex07.fun/StreamFlexLogo.png',
+        'link': 'https://sflex07.fun/StreamFlexTG.ts'
+    }
+    
     for category in category_order:
         if category not in categories:
             continue
-            
+        
+        # Pehle StreamFlex+ channel add karo har category mein
+        m3u_content += f'#EXTINF:-1 group-title="{category}" tvg-logo="{streamflex_channel["logo"]}",{streamflex_channel["name"]}\n'
+        m3u_content += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0\n'
+        m3u_content += f'{streamflex_channel["link"]}\n\n'
+        
+        # Ab baaki channels add karo
         channels = categories[category]
         
         for channel in channels:
@@ -104,7 +117,7 @@ def main():
     categories = categorize_channels(data)
     
     for category, channels in sorted(categories.items()):
-        print(f"   {category}: {len(channels)} channels")
+        print(f"   {category}: {len(channels)} channels (+1 StreamFlex+)")
     
     print("📝 Creating M3U playlist (JioTV format)...")
     m3u_content = create_m3u_playlist(categories)
@@ -112,9 +125,12 @@ def main():
     with open('ZioGarmTara.m3u', 'w', encoding='utf-8') as f:
         f.write(m3u_content)
     
+    total_with_streamflex = len(data) + len(categories)
+    
     print(f"✅ Playlist created: ZioGarmTara.m3u")
-    print(f"📊 Total channels: {len(data)}")
+    print(f"📊 Total channels: {total_with_streamflex} ({len(data)} + {len(categories)} StreamFlex+)")
     print(f"📺 Format: JioTV compatible with DRM support")
+    print(f"⭐ StreamFlex+ added at top of each category!")
     print("")
     print("⚠️  IMPORTANT NOTES:")
     print("   - EPG URL included for guide data")
