@@ -3,7 +3,7 @@
 ## 📱 Playlist Kaise Use Karein?
 
 ### IPTV Players:
-1. **Tivimate** (Android)
+1. **NS PLAYER** (Android/TV)
 2. **VLC Player** (All platforms)
 3. **OTT Navigator** (Android TV)
 4. **GSE Smart IPTV** (iOS/Android)
