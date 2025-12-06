@@ -73,7 +73,8 @@ def create_m3u_playlist(categories):
         channels = categories[category]
         
         for channel in channels:
-            tvg_id = channel.get('id', '')  # JSON se id nikalo
+            # ID ko string mein convert karo (number format se)
+            tvg_id = str(channel.get('id', ''))
             name = channel.get('name', 'Unknown')
             logo = channel.get('logo', '')
             link = channel.get('link', '')
