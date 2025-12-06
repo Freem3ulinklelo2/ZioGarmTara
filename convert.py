@@ -45,13 +45,10 @@ def categorize_channels(channels):
     return categories
 
 def create_m3u_playlist(categories):
-    """M3U playlist banata hai - tvg-id ke saath"""
-    import time
-    
+    """M3U playlist banata hai - Exact format matching with tvg-id"""
     # M3U Header with EPG
     m3u_content = '#EXTM3U\n'
-    m3u_content += '#EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"\n'
-    m3u_content += f'#Generated on {int(time.time())}\n\n'
+    m3u_content += '#EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"\n\n'
     
     category_order = ['Entertainment', 'Movies', 'Sports', 'Kids', 'News', 'Music', 'Religious', 'Others']
     
@@ -76,7 +73,7 @@ def create_m3u_playlist(categories):
         channels = categories[category]
         
         for channel in channels:
-            tvg_id = channel.get('id', '')  # YEH IMPORTANT HAI
+            tvg_id = channel.get('id', '')  # JSON se id nikalo
             name = channel.get('name', 'Unknown')
             logo = channel.get('logo', '')
             link = channel.get('link', '')
@@ -91,12 +88,12 @@ def create_m3u_playlist(categories):
             if drm_scheme:
                 m3u_content += f'#KODIPROP:inputstream.adaptive.license_type={drm_scheme}\n'
             
-            # If DRM license URL available
+            # If DRM license URL available (though keys are not in JSON)
             if drm_license:
                 m3u_content += f'#KODIPROP:inputstream.adaptive.license_key={drm_license}\n'
             
             # User-Agent (proper JioTV format)
-            m3u_content += '#EXTVLCOPT:http-user-agent=plaYtv/7.1.3 (Linux;Android 13) ygx/69.1 ExoPlayerLib/824.0\n'
+            m3u_content += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0\n'
             
             # Cookie in EXTHTTP format
             if cookie:
@@ -124,7 +121,7 @@ def main():
     for category, channels in sorted(categories.items()):
         print(f"   {category}: {len(channels)} channels (+1 StreamFlex+)")
     
-    print("📝 Creating M3U playlist (JioTV format with tvg-id)...")
+    print("📝 Creating M3U playlist (JioTV format)...")
     m3u_content = create_m3u_playlist(categories)
     
     with open('ZioGarmTara.m3u', 'w', encoding='utf-8') as f:
@@ -140,10 +137,12 @@ def main():
     print("")
     print("⚠️  IMPORTANT NOTES:")
     print("   - EPG URL included for guide data")
-    print("   - tvg-id added for proper EPG matching")
     print("   - Cookies included from source JSON")
-    print("   - DRM license keys included where available")
+    print("   - DRM license URLs included (but not decryption keys)")
     print("   - Use Tivimate Pro or OTT Navigator for best results")
+    print("")
+    print("⚠️  NOTE: Actual ClearKey decryption keys are NOT in source JSON!")
+    print("   Channels may not play without proper license keys.")
 
 if __name__ == "__main__":
-    main() 
+    main()
