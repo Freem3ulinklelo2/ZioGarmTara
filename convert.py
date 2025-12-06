@@ -45,7 +45,7 @@ def categorize_channels(channels):
     return categories
 
 def create_m3u_playlist(categories):
-    """M3U playlist banata hai - Exact format matching with tvg-id"""
+    """M3U playlist banata hai - Exact format matching"""
     # M3U Header with EPG
     m3u_content = '#EXTM3U\n'
     m3u_content += '#EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"\n\n'
@@ -56,8 +56,7 @@ def create_m3u_playlist(categories):
     streamflex_channel = {
         'name': 'StreamFlex+',
         'logo': 'https://sflex07.fun/StreamFlexLogo.png',
-        'link': 'https://sflex07.fun/StreamFlexTG.ts',
-        'tvg_id': 'streamflex'
+        'link': 'https://sflex07.fun/StreamFlexTG.ts'
     }
     
     for category in category_order:
@@ -65,7 +64,7 @@ def create_m3u_playlist(categories):
             continue
         
         # Pehle StreamFlex+ channel add karo har category mein
-        m3u_content += f'#EXTINF:-1 tvg-id="{streamflex_channel["tvg_id"]}" group-title="{category}" tvg-logo="{streamflex_channel["logo"]}",{streamflex_channel["name"]}\n'
+        m3u_content += f'#EXTINF:-1 group-title="{category}" tvg-logo="{streamflex_channel["logo"]}",{streamflex_channel["name"]}\n'
         m3u_content += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0\n'
         m3u_content += f'{streamflex_channel["link"]}\n\n'
         
@@ -73,8 +72,6 @@ def create_m3u_playlist(categories):
         channels = categories[category]
         
         for channel in channels:
-            # ID ko string mein convert karo (number format se)
-            tvg_id = str(channel.get('id', ''))
             name = channel.get('name', 'Unknown')
             logo = channel.get('logo', '')
             link = channel.get('link', '')
@@ -82,8 +79,8 @@ def create_m3u_playlist(categories):
             drm_scheme = channel.get('drmScheme', 'clearkey')
             drm_license = channel.get('drmLicense', '')
             
-            # EXTINF line with tvg-id metadata
-            m3u_content += f'#EXTINF:-1 tvg-id="{tvg_id}" group-title="{category}" tvg-logo="{logo}",{name}\n'
+            # EXTINF line with metadata
+            m3u_content += f'#EXTINF:-1 group-title="{category}" tvg-logo="{logo}",{name}\n'
             
             # KODIPROP for DRM
             if drm_scheme:
@@ -133,7 +130,6 @@ def main():
     print(f"✅ Playlist created: ZioGarmTara.m3u")
     print(f"📊 Total channels: {total_with_streamflex} ({len(data)} + {len(categories)} StreamFlex+)")
     print(f"📺 Format: JioTV compatible with DRM support")
-    print(f"🆔 tvg-id added for EPG support!")
     print(f"⭐ StreamFlex+ added at top of each category!")
     print("")
     print("⚠️  IMPORTANT NOTES:")
