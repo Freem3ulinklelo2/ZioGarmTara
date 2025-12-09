@@ -16,7 +16,7 @@ def fetch_json():
         return None
 
 def categorize_channels(channels):
-    """Channels ko category wise organize karta hai"""
+    """Channnels ko category wise organize karta hai"""
     categories = defaultdict(list)
     
     for channel in channels:
