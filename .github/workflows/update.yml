@@ -30,7 +30,7 @@ jobs:
       
     - name: Commit and push changes
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add ZioGarmTara.m3u
         git diff --quiet && git diff --staged --quiet || (git commit -m "Update playlist - $(date +'%Y-%m-%d %H:%M:%S')" && git push)
