@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 
 # JSON URL
-JSON_URL = "https://playify.pages.dev/Jiotv.json"
+JSON_URL = "https://jtv.pfy.workers.dev"
 
 def fetch_json():
     """JSON ko fetch karta hai"""
