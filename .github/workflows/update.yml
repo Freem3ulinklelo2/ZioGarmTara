@@ -2,7 +2,7 @@ name: Update M3U Playlist
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Har 6 ghante mein run hoga
+    - cron: '5 */0 * * *'  # Har 6 ghante mein run hoga
   workflow_dispatch:  # Manual bhi run kar sakte ho
   push:
     branches:
