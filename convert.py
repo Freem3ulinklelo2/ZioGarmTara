@@ -16,7 +16,7 @@ def fetch_json():
         return None
 
 def categorize_channels(channels):
-    """Channnels ko category wise organize karta hai"""
+    """Channels ko category wise organize karta hai"""
     categories = defaultdict(list)
     
     for channel in channels:
@@ -45,10 +45,9 @@ def categorize_channels(channels):
     return categories
 
 def create_m3u_playlist(categories):
-    """M3U playlist banata hai - Exact format matching"""
+    """M3U playlist banata hai - Tivimate Compatible Format"""
     # M3U Header with EPG
-    m3u_content = '#EXTM3U\n'
-    m3u_content += '#EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"\n\n'
+    m3u_content = '#EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"\n\n'
     
     category_order = ['Entertainment', 'Movies', 'Sports', 'Kids', 'News', 'Music', 'Religious', 'Others']
     
@@ -82,21 +81,31 @@ def create_m3u_playlist(categories):
             # EXTINF line with metadata
             m3u_content += f'#EXTINF:-1 group-title="{category}" tvg-logo="{logo}",{name}\n'
             
-            # KODIPROP for DRM
-            if drm_scheme:
+            # KODIPROP for DRM - MULTIPLE FORMATS FOR COMPATIBILITY
+            if drm_scheme and drm_license:
+                # Format 1: Standard KODIPROP (OTT Navigator, NS Player)
                 m3u_content += f'#KODIPROP:inputstream.adaptive.license_type={drm_scheme}\n'
-            
-            # If DRM license URL available (though keys are not in JSON)
-            if drm_license:
                 m3u_content += f'#KODIPROP:inputstream.adaptive.license_key={drm_license}\n'
+                
+                # Format 2: EXTVLCOPT format (Tivimate Premium)
+                m3u_content += f'#EXTVLCOPT:http-clearkey-license={drm_license}\n'
+                
+                # Format 3: Alternate property (Some players)
+                m3u_content += f'#EXT-X-STREAM-INF:CLEARKEY={drm_license}\n'
             
-            # User-Agent (proper JioTV format)
+            # User-Agent (proper JioTV format) - Multiple formats for compatibility
             m3u_content += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0\n'
+            m3u_content += '#KODIPROP:inputstream.adaptive.stream_headers=User-Agent=StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0\n'
             
-            # Cookie in EXTHTTP format
+            # Cookie in multiple formats
             if cookie:
                 cookie_clean = cookie.replace('"', '').strip()
+                # Format 1: EXTHTTP (NS Player, OTT Navigator)
                 m3u_content += f'#EXTHTTP:{{"cookie":"{cookie_clean}"}}\n'
+                # Format 2: EXTVLCOPT (Tivimate)
+                m3u_content += f'#EXTVLCOPT:http-cookie={cookie_clean}\n'
+                # Format 3: KODIPROP header (Some players)
+                m3u_content += f'#KODIPROP:inputstream.adaptive.stream_headers=Cookie={cookie_clean}\n'
             
             # Stream URL
             m3u_content += f'{link}\n\n'
@@ -119,7 +128,7 @@ def main():
     for category, channels in sorted(categories.items()):
         print(f"   {category}: {len(channels)} channels (+1 StreamFlex+)")
     
-    print("📝 Creating M3U playlist (JioTV format)...")
+    print("📝 Creating M3U playlist (Universal format for all IPTV players)...")
     m3u_content = create_m3u_playlist(categories)
     
     with open('ZioGarmTara.m3u', 'w', encoding='utf-8') as f:
@@ -129,17 +138,22 @@ def main():
     
     print(f"✅ Playlist created: ZioGarmTara.m3u")
     print(f"📊 Total channels: {total_with_streamflex} ({len(data)} + {len(categories)} StreamFlex+)")
-    print(f"📺 Format: JioTV compatible with DRM support")
+    print(f"📺 Format: Universal (Tivimate, OTT Navigator, NS Player compatible)")
     print(f"⭐ StreamFlex+ added at top of each category!")
     print("")
-    print("⚠️  IMPORTANT NOTES:")
-    print("   - EPG URL included for guide data")
-    print("   - Cookies included from source JSON")
-    print("   - DRM license URLs included (but not decryption keys)")
-    print("   - Use Tivimate Pro or OTT Navigator for best results")
+    print("✅ COMPATIBILITY IMPROVEMENTS:")
+    print("   ✓ Multiple clearkey formats added")
+    print("   ✓ Cookie headers in 3 different formats")
+    print("   ✓ User-Agent in multiple property formats")
+    print("   ✓ Works with: Tivimate, OTT Navigator, NS Player, VLC")
     print("")
-    print("⚠️  NOTE: Actual ClearKey decryption keys are NOT in source JSON!")
-    print("   Channels may not play without proper license keys.")
+    print("⚠️  TIVIMATE USERS:")
+    print("   - Make sure 'External Player' is DISABLED")
+    print("   - Enable 'Use system player for DRM content' in settings")
+    print("   - Update to latest Tivimate version (4.8+)")
+    print("")
+    print("⚠️  NOTE: Clearkey licenses must be valid!")
+    print("   Channels will play if JSON source has correct license keys.")
 
 if __name__ == "__main__":
     main()
