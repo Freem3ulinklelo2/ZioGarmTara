@@ -6,7 +6,7 @@ from collections import defaultdict
 # ==============================
 
 # Primary JSON source
-JSON_URL = "https://jtv.pfy.workers.dev"
+JSON_URL = "https"
 
 # Fallback M3U source (Direct use if JSON fails)
 M3U_FALLBACK_URL = "https://raw.githubusercontent.com/alex8875/m3u/refs/heads/main/jtv.m3u"
