@@ -45,7 +45,7 @@ def build_logo_map(json_data):
     return logo_map
 
 # ==============================
-# EXISTING CATEGORY LOGIC (UNCHANGED)
+# CATEGORY LOGIC (UNCHANGED)
 # ==============================
 
 def categorize_channels(channels):
@@ -75,7 +75,7 @@ def categorize_channels(channels):
     return categories
 
 # ==============================
-# M3U CREATION (UNCHANGED + LOGO OVERRIDE)
+# M3U CREATION (SAFE LINK ACCESS)
 # ==============================
 
 def create_m3u_playlist(categories, logo_map):
@@ -89,15 +89,18 @@ def create_m3u_playlist(categories, logo_map):
 
     for category, channels in categories.items():
 
-        # ✅ StreamFlex+ (UNCHANGED)
+        # ✅ StreamFlex+ (ALWAYS ON TOP)
         m3u += f'#EXTINF:-1 group-title="{category}" tvg-logo="{streamflex["logo"]}",{streamflex["name"]}\n'
         m3u += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13)\n'
         m3u += f'{streamflex["link"]}\n\n'
 
         for ch in channels:
-            name = ch.get("name", "")
+            name = ch.get("name", "").strip()
+            if not name:
+                continue
+
             key = name.lower()
-            logo = logo_map.get(key, ch.get("logo", ""))  # 🔑 override
+            logo = logo_map.get(key, ch.get("logo", ""))
 
             m3u += f'#EXTINF:-1 group-title="{category}" tvg-logo="{logo}",{name}\n'
 
@@ -110,7 +113,13 @@ def create_m3u_playlist(categories, logo_map):
             if ch.get("cookie"):
                 m3u += f'#EXTVLCOPT:http-cookie={ch["cookie"]}\n'
 
-            m3u += f'{ch["link"]}\n\n'
+            # ✅ SAFE LINK HANDLING (FIX)
+            link = ch.get("link")
+            if not link:
+                print(f"⚠️ Skipped channel without link: {name}")
+                continue
+
+            m3u += f'{link}\n\n'
 
     return m3u
 
@@ -125,12 +134,13 @@ def main():
     if json_data:
         logo_map = build_logo_map(json_data)
         categories = categorize_channels(json_data)
+
         m3u = create_m3u_playlist(categories, logo_map)
 
         with open("ZioGarmTara.m3u", "w", encoding="utf-8") as f:
             f.write(m3u)
 
-        print("✅ Playlist generated from JSON (logos updated)")
+        print("✅ Playlist generated from JSON")
         return
 
     print("⚠️ JSON failed → fallback M3U")
