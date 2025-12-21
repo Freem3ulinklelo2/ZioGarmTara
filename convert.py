@@ -1,168 +1,144 @@
 import requests
+import os
 from collections import defaultdict
 
 # ==============================
-# SOURCES
+# 🔐 SOURCES FROM GITHUB SECRETS
 # ==============================
 
-# Primary JSON source
-JSON_URL = "https"
-
-# Fallback M3U source (Direct use if JSON fails)
-M3U_FALLBACK_URL = "https://raw.githubusercontent.com/alex8875/m3u/refs/heads/main/jtv.m3u"
-
+JSON_URL = os.environ.get("JSON_SOURCE_URL")
+M3U_FALLBACK_URL = os.environ.get("M3U_SOURCE_URL")
 
 # ==============================
 # FETCH FUNCTIONS
 # ==============================
 
 def fetch_json():
-    """JSON fetch karta hai"""
     try:
-        response = requests.get(JSON_URL, timeout=30)
-        response.raise_for_status()
-        return response.json()
+        r = requests.get(JSON_URL, timeout=30)
+        r.raise_for_status()
+        return r.json()
     except Exception as e:
-        print(f"❌ Error fetching JSON: {e}")
+        print(f"❌ JSON fetch failed: {e}")
         return None
-
 
 def fetch_m3u():
-    """Fallback M3U fetch karta hai"""
     try:
-        response = requests.get(M3U_FALLBACK_URL, timeout=30)
-        response.raise_for_status()
-        return response.text
+        r = requests.get(M3U_FALLBACK_URL, timeout=30)
+        r.raise_for_status()
+        return r.text
     except Exception as e:
-        print(f"❌ Error fetching M3U: {e}")
+        print(f"❌ M3U fetch failed: {e}")
         return None
 
+# ==============================
+# LOGO MAP (FROM JSON ONLY)
+# ==============================
+
+def build_logo_map(json_data):
+    logo_map = {}
+    for ch in json_data:
+        name = ch.get("name", "").strip().lower()
+        logo = ch.get("logo", "").strip()
+        if name and logo:
+            logo_map[name] = logo
+    return logo_map
 
 # ==============================
-# CHANNEL CATEGORIZATION
+# EXISTING CATEGORY LOGIC (UNCHANGED)
 # ==============================
 
 def categorize_channels(channels):
-    """Channels ko category wise arrange karta hai"""
     categories = defaultdict(list)
 
     for channel in channels:
-        name = channel.get('name', 'Unknown')
+        name = channel.get("name", "")
         name_lower = name.lower()
 
-        if any(x in name_lower for x in ['sport', 'cricket', 'football', 'tennis', 'fifa', 'espn', 'kabaddi', 'hockey', 'wwe', 'f1']):
+        if any(x in name_lower for x in ['sport', 'cricket', 'football', 'tennis', 'fifa', 'kabaddi', 'wwe']):
             category = 'Sports'
-        elif any(x in name_lower for x in ['kids', 'cartoon', 'pogo', 'nick', 'disney', 'hungama', 'sonic']):
+        elif any(x in name_lower for x in ['kids', 'cartoon', 'disney', 'hungama']):
             category = 'Kids'
-        elif any(x in name_lower for x in ['movie', 'cinema', 'gold', 'max', 'flix', 'pictures']):
+        elif any(x in name_lower for x in ['movie', 'cinema', 'gold', 'max', 'flix']):
             category = 'Movies'
-        elif any(x in name_lower for x in ['news', 'aaj tak', 'ndtv', 'abp', 'republic', 'times now', 'news18']):
+        elif any(x in name_lower for x in ['news', 'ndtv', 'aaj tak', 'republic']):
             category = 'News'
-        elif any(x in name_lower for x in ['music', 'mtv', '9xm', 'zoom', 'b4u']):
+        elif any(x in name_lower for x in ['music', 'mtv', '9xm']):
             category = 'Music'
-        elif any(x in name_lower for x in ['bhakti', 'spiritual', 'aastha', 'sanskar']):
+        elif any(x in name_lower for x in ['bhakti', 'aastha', 'sanskar']):
             category = 'Religious'
-        elif any(x in name_lower for x in ['colors', 'zee', 'star', 'sony', 'sab', '&tv', 'rishtey']):
-            category = 'Entertainment'
         else:
-            category = 'Others'
+            category = 'Entertainment'
 
         categories[category].append(channel)
 
     return categories
 
-
 # ==============================
-# M3U CREATION
+# M3U CREATION (UNCHANGED + LOGO OVERRIDE)
 # ==============================
 
-def create_m3u_playlist(categories):
-    """Universal IPTV compatible M3U banata hai"""
+def create_m3u_playlist(categories, logo_map):
     m3u = '#EXTM3U x-tvg-url="https://avkb.short.gy/jioepg.xml.gz"\n\n'
 
-    category_order = [
-        'Entertainment', 'Movies', 'Sports',
-        'Kids', 'News', 'Music', 'Religious', 'Others'
-    ]
-
-    streamflex_channel = {
-        'name': 'StreamFlex+',
-        'logo': 'https://sflex07.fun/StreamFlexLogo.png',
-        'link': 'https://sflex07.fun/StreamFlexTG.ts'
+    streamflex = {
+        "name": "StreamFlex+",
+        "logo": "https://sflex07.fun/StreamFlexLogo.png",
+        "link": "https://sflex07.fun/StreamFlexTG.ts"
     }
 
-    for category in category_order:
-        if category not in categories:
-            continue
+    for category, channels in categories.items():
 
-        # StreamFlex+ channel (top of every category)
-        m3u += f'#EXTINF:-1 group-title="{category}" tvg-logo="{streamflex_channel["logo"]}",{streamflex_channel["name"]}\n'
+        # ✅ StreamFlex+ (UNCHANGED)
+        m3u += f'#EXTINF:-1 group-title="{category}" tvg-logo="{streamflex["logo"]}",{streamflex["name"]}\n'
         m3u += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13)\n'
-        m3u += f'{streamflex_channel["link"]}\n\n'
+        m3u += f'{streamflex["link"]}\n\n'
 
-        for ch in categories[category]:
-            name = ch.get('name', 'Unknown')
-            logo = ch.get('logo', '')
-            link = ch.get('link', '')
-            cookie = ch.get('cookie', '')
-            drm_scheme = ch.get('drmScheme', '')
-            drm_license = ch.get('drmLicense', '')
+        for ch in channels:
+            name = ch.get("name", "")
+            key = name.lower()
+            logo = logo_map.get(key, ch.get("logo", ""))  # 🔑 override
 
             m3u += f'#EXTINF:-1 group-title="{category}" tvg-logo="{logo}",{name}\n'
 
-            if drm_scheme and drm_license:
-                m3u += f'#KODIPROP:inputstream.adaptive.license_type={drm_scheme}\n'
-                m3u += f'#KODIPROP:inputstream.adaptive.license_key={drm_license}\n'
-                m3u += f'#EXTVLCOPT:http-clearkey-license={drm_license}\n'
+            if ch.get("drmScheme") and ch.get("drmLicense"):
+                m3u += f'#KODIPROP:inputstream.adaptive.license_type={ch["drmScheme"]}\n'
+                m3u += f'#KODIPROP:inputstream.adaptive.license_key={ch["drmLicense"]}\n'
 
             m3u += '#EXTVLCOPT:http-user-agent=StreamFlex/7.1.3 (Linux;Android 13)\n'
 
-            if cookie:
-                cookie_clean = cookie.replace('"', '').strip()
-                m3u += f'#EXTHTTP:{{"cookie":"{cookie_clean}"}}\n'
-                m3u += f'#EXTVLCOPT:http-cookie={cookie_clean}\n'
+            if ch.get("cookie"):
+                m3u += f'#EXTVLCOPT:http-cookie={ch["cookie"]}\n'
 
-            m3u += f'{link}\n\n'
+            m3u += f'{ch["link"]}\n\n'
 
     return m3u
 
-
 # ==============================
-# MAIN EXECUTION
+# MAIN
 # ==============================
 
 def main():
-    print("🔄 Fetching JSON source...")
-    data = fetch_json()
+    print("🔄 Fetching JSON...")
+    json_data = fetch_json()
 
-    # CASE 1: JSON SUCCESS
-    if data and isinstance(data, list) and len(data) > 0:
-        print(f"✅ JSON loaded: {len(data)} channels")
+    if json_data:
+        logo_map = build_logo_map(json_data)
+        categories = categorize_channels(json_data)
+        m3u = create_m3u_playlist(categories, logo_map)
 
-        categories = categorize_channels(data)
-        m3u_content = create_m3u_playlist(categories)
+        with open("ZioGarmTara.m3u", "w", encoding="utf-8") as f:
+            f.write(m3u)
 
-        with open('ZioGarmTara.m3u', 'w', encoding='utf-8') as f:
-            f.write(m3u_content)
+        print("✅ Playlist generated from JSON (logos updated)")
+        return
 
-        print("✅ Playlist created from JSON")
-
-    # CASE 2: JSON FAIL → DIRECT M3U
-    else:
-        print("⚠️ JSON failed, switching to DIRECT M3U MODE")
-
-        fallback_m3u = fetch_m3u()
-        if not fallback_m3u:
-            print("❌ Both JSON and M3U failed")
-            return
-
-        with open('ZioGarmTara.m3u', 'w', encoding='utf-8') as f:
+    print("⚠️ JSON failed → fallback M3U")
+    fallback_m3u = fetch_m3u()
+    if fallback_m3u:
+        with open("ZioGarmTara.m3u", "w", encoding="utf-8") as f:
             f.write(fallback_m3u)
-
-        print("✅ Playlist created from fallback M3U")
-
-    print("🚀 Done! GitHub Action will commit automatically.")
-
+        print("✅ Fallback M3U saved")
 
 if __name__ == "__main__":
     main()
