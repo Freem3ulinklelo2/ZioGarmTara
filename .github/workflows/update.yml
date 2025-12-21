@@ -25,10 +25,10 @@ jobs:
       run: |
         pip install requests
 
-    - name: Run conversion script (with secrets)
+    - name: Run conversion script
       env:
-        JSON_SOURCE_URL: ${{ secrets.JSON_SOURCE_URL }}
-        M3U_SOURCE_URL: ${{ secrets.M3U_SOURCE_URL }}
+        BASE_M3U_URL: ${{ secrets.BASE_M3U_URL }}
+        LOGO_JSON_URL: ${{ secrets.LOGO_JSON_URL }}
       run: |
         python convert.py
 
