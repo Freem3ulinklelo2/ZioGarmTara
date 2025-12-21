@@ -16,20 +16,6 @@ LOGO_JSON_URL = os.environ.get("LOGO_JSON_URL")
 STREAMFLEX_UA = "StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0"
 
 # ==============================
-# PRIORITY CHANNEL KEYWORDS
-# ==============================
-
-PRIORITY_KEYS = [
-    "star sports",
-    "star plus",
-    "star bharat",
-    "colors",
-    "rishtey",
-    "disney",
-    "hungama"
-]
-
-# ==============================
 # FETCH FUNCTIONS
 # ==============================
 
@@ -47,83 +33,54 @@ def fetch_logo_json():
         return []
 
 # ==============================
-# NORMALIZE NAME (LOGO MATCH)
-# ==============================
-
-def normalize(name: str) -> str:
-    name = name.lower()
-    name = re.sub(r'\b(hd|sd|tv|plus)\b', '', name)
-    name = re.sub(r'[^a-z0-9 ]', '', name)
-    return re.sub(r'\s+', ' ', name).strip()
-
-# ==============================
-# BUILD LOGO MAP
+# BUILD LOGO MAP (NAME → LOGO)
 # ==============================
 
 def build_logo_map(json_data):
     logo_map = {}
     for ch in json_data:
-        name = ch.get("name", "")
-        logo = ch.get("logo", "")
+        name = ch.get("name", "").strip().lower()
+        logo = ch.get("logo", "").strip()
         if name and logo:
-            logo_map[normalize(name)] = logo
+            logo_map[name] = logo
     return logo_map
 
 # ==============================
-# APPLY LOGOS + UA FIX + PRIORITY
+# APPLY LOGOS + FIX USER-AGENT
 # ==============================
 
-def process_m3u(base_m3u, logo_map):
+def apply_logos(base_m3u, logo_map):
+    out = []
     lines = base_m3u.splitlines()
-    channels = []
 
-    i = 0
-    while i < len(lines):
-        line = lines[i]
-
-        # ✅ FIX USER-AGENT (ygx → StreamFlex)
+    for line in lines:
+        # ✅ USER-AGENT FIX (ygx → StreamFlex)
         if "user-agent" in line.lower():
             line = re.sub(
                 r'(?i)user-agent=.*',
                 f'#EXTVLCOPT:http-user-agent={STREAMFLEX_UA}',
                 line
             )
-            channels.append((False, line, None))
-            i += 1
-            continue
 
         if line.startswith("#EXTINF"):
             name = line.split(",")[-1].strip()
-            url = lines[i + 1] if i + 1 < len(lines) else ""
+            key = name.lower()
 
-            key = normalize(name)
             logo = logo_map.get(key)
 
-            # remove old tvg-logo
-            clean_line = re.sub(r'tvg-logo="[^"]*"', '', line)
+            # Remove old tvg-logo if exists
+            line = re.sub(r'tvg-logo="[^"]*"', '', line)
 
+            # Add new logo if available
             if logo:
-                clean_line = clean_line.replace(
+                line = line.replace(
                     "#EXTINF:-1",
                     f'#EXTINF:-1 tvg-logo="{logo}"'
                 )
 
-            priority = any(k in key for k in PRIORITY_KEYS)
-
-            channels.append((priority, clean_line, url))
-            i += 2
+            out.append(line)
         else:
-            channels.append((False, line, None))
-            i += 1
-
-    # Priority channels on top
-    channels.sort(key=lambda x: x[0], reverse=True)
-
-    out = []
-    for _, line, url in channels:
-        out.append(line)
-        if url:
-            out.append(url)
+            out.append(line)
 
     return "\n".join(out) + "\n"
 
@@ -138,15 +95,16 @@ def main():
     print("🔄 Fetching logo JSON...")
     json_data = fetch_logo_json()
     logo_map = build_logo_map(json_data)
-    print(f"✅ Logos mapped: {len(logo_map)}")
 
-    print("🛠 Applying logos + StreamFlex UA (ygx removed)...")
-    final_m3u = process_m3u(base_m3u, logo_map)
+    print(f"✅ Logos loaded: {len(logo_map)}")
+
+    print("🛠 Replacing logos + fixing User-Agent (ygx removed)...")
+    final_m3u = apply_logos(base_m3u, logo_map)
 
     with open("ZioGarmTara.m3u", "w", encoding="utf-8") as f:
         f.write(final_m3u)
 
-    print("✅ ZioGarmTara.m3u generated successfully")
+    print("✅ ZioGarmTara.m3u created successfully")
 
 if __name__ == "__main__":
     main()
