@@ -13,3 +13,5 @@
 2. Player mein "Add Playlist" option pe jao
 3. URL paste karo
 4. Done! Categories automatically organize hogi
+
+Credits: Alex
