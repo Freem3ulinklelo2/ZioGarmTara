@@ -1,12 +1,12 @@
 import requests
 import os
-import base64
+import re
+from collections import defaultdict
 
 # ==============================
 # 🔐 SOURCES FROM GITHUB SECRETS
 # ==============================
 
-BASE_M3U_URL = os.environ.get("BASE_M3U_URL")  # Ab iski zaroorat nahi, bas JSON se kaam
 LOGO_JSON_URL = os.environ.get("LOGO_JSON_URL")
 
 # ==============================
@@ -16,6 +16,49 @@ LOGO_JSON_URL = os.environ.get("LOGO_JSON_URL")
 STREAMFLEX_UA = "StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0"
 STREAMFLEX_WATERMARK = "StreamFlex"
 STREAMFLEX_TG = "@StreamFlex19"
+
+# ==============================
+# CATEGORIES & LANGUAGES DETECTION
+# ==============================
+
+CATEGORIES = {
+    'Entertainment': ['colors', 'zee tv', 'sony', 'star plus', 'mtv', 'vh1', '9xm', 'zoom', 'et now', 'times now'],
+    'Movies': ['hbo', 'sony max', 'star gold', 'zee cinema', '&pictures', 'movies now', 'romedy now', 'flix'],
+    'Sports': ['star sports', 'sony ten', 'sony six', 'dd sports', 'euro sports', 'neo sports'],
+    'News': ['aaj tak', 'abp', 'ndtv', 'cnn', 'bbc', 'republic', 'times now', 'india today', 'news18'],
+    'Kids': ['cartoon', 'pogo', 'nick', 'disney', 'hungama', 'sonic', 'babytv'],
+    'Music': ['mtv', 'vh1', '9xm', 'zoom', 'sony mix', 'mastiii'],
+    'Devotional': ['aastha', 'sanskar', 'sadhna', 'divya'],
+    'Regional': []
+}
+
+LANGUAGES = {
+    'Hindi': ['hindi', 'colors', 'zee tv', 'sony', 'star plus', 'aaj tak', 'abp'],
+    'English': ['english', 'hbo', 'cnn', 'bbc', 'sony pix', 'movies now'],
+    'Tamil': ['tamil', 'sun tv', 'vijay', 'kalaignar', 'polimer', 'raj tv'],
+    'Telugu': ['telugu', 'gemini', 'etv', 'maa tv', 'zee telugu'],
+    'Malayalam': ['malayalam', 'asianet', 'surya', 'mazhavil'],
+    'Kannada': ['kannada', 'udaya', 'zee kannada', 'colors kannada'],
+    'Marathi': ['marathi', 'zee marathi', 'colors marathi', 'saam'],
+    'Bengali': ['bengali', 'zee bangla', 'star jalsha', 'colors bangla'],
+    'Punjabi': ['punjabi', 'zee punjabi', 'ptc', 'colors punjabi'],
+    'Gujarati': ['gujarati', 'colors gujarati', 'etv gujarati'],
+    'Urdu': ['urdu', 'geo', 'ary', 'hum', 'express']
+}
+
+def detect_category(name):
+    name_lower = name.lower()
+    for category, keywords in CATEGORIES.items():
+        if any(keyword in name_lower for keyword in keywords):
+            return category
+    return 'Others'
+
+def detect_language(name):
+    name_lower = name.lower()
+    for lang, keywords in LANGUAGES.items():
+        if any(keyword in name_lower for keyword in keywords):
+            return lang
+    return 'Hindi'  # Default
 
 # ==============================
 # FETCH JSON DATA
@@ -35,51 +78,83 @@ def fetch_json_data():
 # ==============================
 
 def build_m3u(channels):
+    # Group by Category and Language
+    categorized = defaultdict(lambda: defaultdict(list))
+    
+    for ch in channels:
+        name = ch.get("name", "Unknown").strip()
+        category = detect_category(name)
+        language = detect_language(name)
+        categorized[category][language].append(ch)
+    
     lines = []
     
-    # M3U Header with StreamFlex branding
+    # M3U Header
     lines.append("#EXTM3U")
     lines.append(f"# Playlist: ZioGarmTara")
     lines.append(f"# Created by: {STREAMFLEX_WATERMARK}")
     lines.append(f"# Telegram: {STREAMFLEX_TG}")
+    lines.append(f"# Total Channels: {len(channels)}")
+    lines.append(f"# Categories: Entertainment, Movies, Sports, News, Kids, Music, Devotional, Regional")
+    lines.append(f"# Languages: Hindi, English, Tamil, Telugu, Malayalam, Kannada, Marathi, Bengali, Punjabi, Gujarati, Urdu")
     lines.append(f"# User-Agent: {STREAMFLEX_UA}")
     lines.append("")
     
-    for ch in channels:
-        name = ch.get("name", "Unknown").strip()
-        logo = ch.get("logo", "").strip()
-        link = ch.get("link", "").strip()
-        cookie = ch.get("cookie", "").strip()
-        drm_scheme = ch.get("drmScheme", "").strip()
-        drm_license = ch.get("drmLicense", "").strip()
+    # Sort categories: Entertainment first, Others last
+    sorted_categories = sorted(categorized.keys(), key=lambda x: (x == 'Others', x))
+    
+    for category in sorted_categories:
+        lines.append(f"########## {category.upper()} ##########")
+        lines.append("")
         
-        if not link:
-            continue
+        # Sort languages: Hindi first, English second, others alphabetical
+        sorted_langs = sorted(categorized[category].keys(), 
+                            key=lambda x: (x not in ['Hindi', 'English'], 
+                                         x != 'Hindi', 
+                                         x != 'English', 
+                                         x))
         
-        # Build EXTINF line
-        extinf = f'#EXTINF:-1 tvg-name="{name}"'
-        if logo:
-            extinf += f' tvg-logo="{logo}"'
-        extinf += f' group-title="{STREAMFLEX_WATERMARK}",{name}'
-        lines.append(extinf)
-        
-        # Add VLCOPT for User-Agent
-        lines.append(f'#EXTVLCOPT:http-user-agent={STREAMFLEX_UA}')
-        
-        # Add Cookie if available
-        if cookie:
-            lines.append(f'#EXTVLCOPT:http-cookie={cookie}')
-        
-        # Add DRM headers if available
-        if drm_scheme and drm_license:
-            if drm_scheme.lower() == "clearkey":
-                lines.append(f'#KODIPROP:inputstream.adaptive.license_type=clearkey')
-                lines.append(f'#KODIPROP:inputstream.adaptive.license_key={drm_license}')
-                lines.append(f'#EXTVLCOPT:http-header=Authorization=Bearer {drm_license}')
-        
-        # Add Stream URL
-        lines.append(link)
-        lines.append("")  # Empty line between channels
+        for language in sorted_langs:
+            lines.append(f"#### {language} ####")
+            
+            # Sort channels alphabetically
+            sorted_channels = sorted(categorized[category][language], 
+                                   key=lambda x: x.get('name', '').lower())
+            
+            for ch in sorted_channels:
+                name = ch.get("name", "Unknown").strip()
+                logo = ch.get("logo", "").strip()
+                link = ch.get("link", "").strip()
+                cookie = ch.get("cookie", "").strip()
+                drm_scheme = ch.get("drmScheme", "").strip()
+                drm_license = ch.get("drmLicense", "").strip()
+                
+                if not link:
+                    continue
+                
+                # Build EXTINF line
+                extinf = f'#EXTINF:-1 tvg-name="{name}"'
+                if logo:
+                    extinf += f' tvg-logo="{logo}"'
+                extinf += f' group-title="{category} | {language}",{name}'
+                lines.append(extinf)
+                
+                # VLC Options
+                lines.append(f'#EXTVLCOPT:http-user-agent={STREAMFLEX_UA}')
+                
+                if cookie:
+                    lines.append(f'#EXTVLCOPT:http-cookie={cookie}')
+                
+                # DRM Headers
+                if drm_scheme and drm_license:
+                    if drm_scheme.lower() == "clearkey":
+                        lines.append(f'#KODIPROP:inputstream.adaptive.license_type=clearkey')
+                        lines.append(f'#KODIPROP:inputstream.adaptive.license_key={drm_license}')
+                
+                lines.append(link)
+                lines.append("")
+            
+            lines.append("")  # Empty line after language group
     
     return "\n".join(lines)
 
@@ -88,23 +163,23 @@ def build_m3u(channels):
 # ==============================
 
 def main():
-    print(f"🔄 Fetching JSON data from {LOGO_JSON_URL}...")
+    print(f"🔄 Fetching JSON data...")
     channels = fetch_json_data()
     
     if not channels:
-        print("❌ No channels found in JSON!")
+        print("❌ No channels found!")
         return
     
     print(f"✅ Found {len(channels)} channels")
+    print(f"🛠 Organizing by Categories & Languages...")
     
-    print(f"🛠 Building M3U with {STREAMFLEX_WATERMARK} branding...")
     m3u_content = build_m3u(channels)
     
     with open("ZioGarmTara.m3u", "w", encoding="utf-8") as f:
         f.write(m3u_content)
     
-    print(f"✅ ZioGarmTara.m3u created successfully!")
-    print(f"📺 Total channels: {len(channels)}")
+    print(f"✅ ZioGarmTara.m3u created!")
+    print(f"📺 Total: {len(channels)} channels")
     print(f"🏷️  Watermark: {STREAMFLEX_WATERMARK}")
     print(f"📱 Telegram: {STREAMFLEX_TG}")
 
