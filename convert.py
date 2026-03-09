@@ -12,13 +12,13 @@ LOGO_JSON_URL = os.environ.get("LOGO_JSON_URL")
 # STREAMFLEX CONFIG
 # ==============================
 
-STREAMFLEX_UA      = "StreamFlex/7.1.3 (Linux;Android 13) StreamFlex/69.1 ExoPlayerLib/824.0"
+STREAMFLEX_UA        = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36"
 STREAMFLEX_WATERMARK = "StreamFlex"
-STREAMFLEX_TG      = "@StreamFlex19"
-DEFAULT_CATEGORY   = "Entertainment"
+STREAMFLEX_TG        = "@StreamFlex19"
+DEFAULT_CATEGORY     = "Entertainment"
 
 # ==============================
-# CATEGORY DISPLAY ORDER
+# CATEGORY ORDER
 # ==============================
 
 CATEGORY_ORDER = [
@@ -42,131 +42,149 @@ CATEGORY_ORDER = [
 
 # ==============================
 # REGIONAL LANGUAGE KEYWORDS
-# (used ONLY to sub-sort within a category — Hindi first, regional after)
+# (used only for sorting: Hindi first, regional after)
 # ==============================
 
 REGIONAL_KEYWORDS = [
     "bengali", "bangla", "kannada", "malayalam", "malyalam",
     "marathi", "tamil", "telugu", "punjabi", "gujarati",
-    "bhojpuri", "rajasthani", "haryanvi", "urdu", "nepali",
+    "bhojpuri", "rajasthani", "haryanvi", "nepali",
     "assamese", "maithili", "odia", "odiya", "oriya",
     "odisha", "tarang", "otv", "sambad", "kanak",
 ]
 
 # ==============================
-# CONTENT CATEGORY MAP
-# NOTE: Checked FIRST — so "Star Sports Tamil" → Sports, NOT Other Languages
+# PURE REGIONAL CHANNEL NAMES
+# These land in "Other Languages" ONLY if no content keyword matches
 # ==============================
 
-# Each entry: (keywords_list, category)
+PURE_REGIONAL_NAMES = [
+    # Bengali
+    "star jalsha", "zee bangla", "colors bangla", "sun bangla",
+    "maach bhaat", "jalsha movies", "star jalsha hd",
+    # Kannada
+    "star suvarna", "zee kannada", "colors kannada", "udaya tv",
+    "star suvarna hd", "zee kannada hd",
+    # Malayalam
+    "asianet", "surya tv", "mazhavil manorama", "flowers tv",
+    "safari tv", "kairali tv", "media one", "reporter tv",
+    "asianet hd", "surya tv hd",
+    # Marathi
+    "star pravah", "zee marathi", "colors marathi", "sony marathi",
+    "fakt marathi", "star pravah hd",
+    # Tamil
+    "sun tv", "vijay tv", "zee tamil", "colors tamil", "star vijay",
+    "kalaignar tv", "polimer tv", "jaya tv", "captain tv",
+    "sun tv hd", "vijay tv hd",
+    # Telugu
+    "star maa", "zee telugu", "colors telugu", "etv telugu",
+    "gemini tv", "maa gold", "star maa hd", "zee telugu hd",
+    # Punjabi
+    "ptc punjabi", "ptc news", "zee punjabi", "colors punjabi",
+    # Gujarati
+    "colors gujarati", "zee gujarati", "tv9 gujarati",
+    # Bhojpuri
+    "bhojpuri cinema", "mahua tv", "enter10 bhojpuri",
+    # Urdu
+    "zee salaam", "dd urdu", "ary digital", "geo tv",
+]
+
+# ==============================
+# CONTENT CATEGORY MAP
+# CHECKED FIRST — regional content channels stay in correct category
+# ==============================
+
 CONTENT_MAP = [
 
-    # ---- Sports (checked FIRST — regional sports channels stay here) ----
-    (["star sports", "sony six", "sony ten", "dd sports",
-      "willow tv", "eurosport", "ten sports", "fight sports",
-      "dsport", "1sports", "1 sports",
+    # ---- Sports ----
+    (["star sports", "sony six", "sony ten",
+      "dd sports", "willow", "eurosport",
+      "ten sports", "dsport", "1sports", "1 sports",
       "sports18", "sports 18", "jio sports",
-      " sports", "sport ", "cricket", " ipl ",
-      "kabaddi", "wrestling", "football tv",
-      "kheloyar", "fancode"],                             "Sports"),
+      "fight sports", "kheloyar", "fancode",
+      "cricket", "kabaddi", "wrestling"],               "Sports"),
 
     # ---- Movies ----
-    (["zee cinema", "sony max", "star gold", "b4u movies",
-      "zee bollywood", "zee action", "sony wah", "mm movies",
-      "ultra movies", "films", " movies", "movie ",
-      "cinema ", "cinemax", "zee classic",
+    (["zee cinema", "sony max", "star gold",
+      "b4u movies", "zee bollywood", "zee action",
+      "sony wah", "mm movies", "ultra movies",
       "star utsav movies", "colors cineplex",
-      "&pictures", "& pictures", "and pictures",
-      "epic", "maa movies", "gemini movies",
+      "&pictures", "& pictures",
+      "maa movies", "gemini movies",
       "udaya movies", "kairali movies",
-      "mazhavil", "flowers"],                             "Movies"),
+      "sun music", "cinemax", "zee classic",
+      " movies", "movie "],                             "Movies"),
 
     # ---- Kids ----
-    (["pogo", "disney junior", "disney channel", "disney xd",
-      "hungama tv", "sonic nickelodeon", "nick jr",
-      "cartoon network", "baby tv", "cbeebies",
-      "super hungama", "marvel hq",
-      " kids", "junior "],                               "Kids"),
+    (["pogo", "disney junior", "disney channel",
+      "disney xd", "hungama tv",
+      "nickelodeon", "nick jr", "sonic ",
+      "cartoon network", "baby tv",
+      "cbeebies", "super hungama", "marvel hq",
+      " kids", "junior "],                              "Kids"),
 
     # ---- News ----
     (["aaj tak", "ndtv 24x7", "ndtv india", "india tv",
-      "zee news", "abp news", "abp live", "tv9 bharatvarsh",
-      "news18 india", "news18 ", "news 18",
+      "zee news", "abp news", "abp live",
+      "tv9 bharatvarsh", "news18 india",
       "republic bharat", "republic tv",
-      "mirror now", "times now", "navbharat times",
+      "mirror now", "times now",
       "wion", "dd news", "dd national",
-      "india news", "samachar", " news"],                "News"),
+      "india news", " news"],                           "News"),
 
     # ---- Business News ----
     (["cnbc awaaz", "cnbc tv18", "zee business",
-      "et now", "ndtv profit", "business today",
-      "money control", "bloomberg quint"],               "Business News"),
+      "et now", "ndtv profit", "bloomberg"],            "Business News"),
 
     # ---- Music ----
-    (["mtv india", "vh1 india", "b4u music",
-      "9xm", "9x jalwa", "9x tashan", "9x jhakaas",
+    (["mtv india", "vh1", "b4u music",
+      "9xm", "9x jalwa", "9x tashan",
+      "9x jhakaas", "9x bindaas",
       "zee music", "sony mix", "mastiii",
-      "music india", "hits ", " hits",
-      "ishq fm", "radio", " music"],                    "Music"),
+      "ishq fm", " music"],                             "Music"),
 
     # ---- Devotional ----
-    (["aastha", "sanskar tv", "sadhna tv", "ishwar tv",
-      "divya tv", "god tv", "peace tv",
-      "disha tv", "satsang", "bhakti tv",
+    (["aastha", "sanskar", "sadhna tv",
+      "ishwar tv", "divya tv", "god tv",
+      "peace tv", "disha tv", "bhakti tv",
       "zee anmol", "mantra tv",
-      "devotional", "spiritual", "dharm"],              "Devotional"),
+      "devotional", "spiritual"],                       "Devotional"),
 
     # ---- Lifestyle ----
-    (["tlc india", "fox life", "ndtv good times",
-      "zee living", "living foodz", "food food",
-      "enter10 talkies", "travel xp",
-      "lifestyle ", " lifestyle",
-      "fashion tv", " fashion"],                        "Lifestyle"),
+    (["tlc", "fox life", "ndtv good times",
+      "zee living", "living foodz",
+      "food food", "travel xp",
+      " lifestyle", "fashion tv"],                      "Lifestyle"),
 
     # ---- Infotainment ----
     (["zoom tv", "e! entertainment",
-      "star world", "fx channel",
-      "colors infinity", "& flix", "&flix",
-      "studio ", "infotainment"],                       "Infotainment"),
+      "star world", "colors infinity",
+      "& flix", "&flix", "infotainment"],               "Infotainment"),
 
     # ---- Knowledge ----
-    (["nat geo wild", "national geographic",
-      "discovery science", "discovery channel",
-      "animal planet", "history tv18",
-      "dd bharati", "curiosity stream",
-      " knowledge"],                                    "Knowledge"),
+    (["nat geo", "national geographic",
+      "discovery", "animal planet",
+      "history tv18", "dd bharati",
+      "curiosity", " knowledge"],                       "Knowledge"),
 
     # ---- Educational ----
-    (["dd kisan", "dd urdu", "dd retro",
-      "swayam", "class plus", "byjus",
-      "sharda", "educational", " education"],           "Educational"),
+    (["dd kisan", "swayam", "class plus",
+      "educational", " education"],                     "Educational"),
 
     # ---- Shopping ----
-    (["home shop 18", "naaptol", "star cj alive",
-      "telebrand", "shop cj", "news18 shoppping",
-      " shopping", "shop "],                            "Shopping"),
+    (["home shop 18", "naaptol", "star cj",
+      "telebrand", "shop cj", " shopping"],             "Shopping"),
 
-    # ---- English (international) ----
-    (["cnn international", "bbc world", "fox news",
-      "sky news", "bloomberg tv", "cnbc world",
-      "nat geo (english)", "discovery hd world",
-      "hbo", "showtime", "comedy central",
-      "nickelodeon (us)", "disney (us)",
-      "abc news", "nbc news", " english"],              "English"),
+    # ---- English ----
+    (["cnn", "bbc world", "fox news",
+      "sky news", "hbo", "showtime",
+      "comedy central", "abc news",
+      "nbc news", " english"],                          "English"),
 
     # ---- Odia ----
     (["odia ", " odia", "odiya", "oriya",
-      "tarang tv", "otv ", " otv",
-      "sambad", "kanak tv", "odisha tv",
-      "prarthana", "ollywood"],                         "Odia"),
-
-    # ---- Other Languages (checked LAST — only pure regional channels land here) ----
-    (["bengali", "bangla", "kannada",
-      "malayalam", "malyalam", "marathi",
-      "tamil", "telugu", "punjabi",
-      "gujarati", "bhojpuri", "rajasthani",
-      "haryanvi", "urdu channel", "nepali",
-      "assamese", "maithili"],                          "Other Languages"),
+      "tarang", "otv", "sambad",
+      "kanak", "odisha tv", "ollywood"],                "Odia"),
 ]
 
 # ==============================
@@ -174,25 +192,30 @@ CONTENT_MAP = [
 # ==============================
 
 def detect_category(ch):
-    # If JSON already has category, trust it
+    # Priority 1: JSON field
     cat = ch.get("category", "").strip()
     if cat:
         return cat
 
     name_lower = " " + ch.get("name", "").lower() + " "
 
+    # Priority 2: Content keywords (checked FIRST)
     for keywords, category in CONTENT_MAP:
         for kw in keywords:
             if kw in name_lower:
                 return category
 
+    # Priority 3: Pure regional channel list
+    name_clean = ch.get("name", "").lower().strip()
+    for regional_name in PURE_REGIONAL_NAMES:
+        if regional_name in name_clean:
+            return "Other Languages"
+
     return DEFAULT_CATEGORY
 
 
 # ==============================
-# CHECK IF CHANNEL IS REGIONAL
-# (Hindi = False → goes to top of category)
-# (Regional language = True → goes below Hindi)
+# IS REGIONAL (for sorting within category)
 # ==============================
 
 def is_regional(name):
@@ -227,19 +250,82 @@ def group_by_category(channels):
 
 
 # ==============================
-# BUILD M3U
-# Compatible: TiviMate | OTT Navigator | NS Player | VLC | Kodi
+# BUILD SINGLE CHANNEL ENTRY
+# Proper format for: TiviMate | OTT Navigator | NS Player | VLC | Kodi
+# ==============================
+
+def build_channel_entry(ch, category):
+    lines = []
+
+    name        = ch.get("name", "Unknown").strip()
+    logo        = ch.get("logo", "").strip()
+    link        = ch.get("link", "").strip()
+    cookie      = ch.get("cookie", "").strip()
+    drm_scheme  = ch.get("drmScheme", "").strip()
+    drm_license = ch.get("drmLicense", "").strip()
+
+    if not link:
+        return []
+
+    is_mpd = ".mpd" in link.lower()
+    is_m3u8 = ".m3u8" in link.lower() or ".ts" in link.lower()
+
+    # --- EXTINF ---
+    extinf = f'#EXTINF:-1 tvg-name="{name}"'
+    if logo:
+        extinf += f' tvg-logo="{logo}"'
+    extinf += f' group-title="{category}",{name}'
+    lines.append(extinf)
+
+    # --- MPD (DASH) Stream handling ---
+    if is_mpd:
+        lines.append('#KODIPROP:inputstream=inputstream.adaptive')
+        lines.append('#KODIPROP:inputstream.adaptive.manifest_type=mpd')
+
+        if drm_scheme.lower() == "clearkey":
+            lines.append('#KODIPROP:inputstream.adaptive.license_type=clearkey')
+            lines.append(f'#KODIPROP:inputstream.adaptive.license_key={drm_license}')
+
+        # Build piped URL with headers (works in TiviMate, OTT Nav, NS Player)
+        header_parts = [f"User-Agent={requests.utils.quote(STREAMFLEX_UA)}"]
+        if cookie:
+            header_parts.append(f"Cookie={requests.utils.quote(cookie)}")
+
+        final_link = link + "|" + "&".join(header_parts)
+
+    # --- HLS / M3U8 / TS Stream handling ---
+    elif is_m3u8:
+        header_parts = [f"User-Agent={requests.utils.quote(STREAMFLEX_UA)}"]
+        if cookie:
+            header_parts.append(f"Cookie={requests.utils.quote(cookie)}")
+
+        final_link = link + "|" + "&".join(header_parts)
+
+    # --- Fallback (direct stream) ---
+    else:
+        lines.append(f'#EXTVLCOPT:http-user-agent={STREAMFLEX_UA}')
+        if cookie:
+            lines.append(f'#EXTVLCOPT:http-cookie={cookie}')
+        final_link = link
+
+    lines.append(final_link)
+    lines.append("")
+    return lines
+
+
+# ==============================
+# BUILD FULL M3U
 # ==============================
 
 def build_m3u(channels):
-    lines = []
-
-    lines.append("#EXTM3U")
-    lines.append(f"# Playlist  : ZioGarmTara")
-    lines.append(f"# Created by: {STREAMFLEX_WATERMARK}")
-    lines.append(f"# Telegram  : {STREAMFLEX_TG}")
-    lines.append(f"# Players   : TiviMate | OTT Navigator | NS Player | VLC | Kodi")
-    lines.append("")
+    header_lines = [
+        "#EXTM3U",
+        f"# Playlist  : ZioGarmTara",
+        f"# Created by: {STREAMFLEX_WATERMARK}",
+        f"# Telegram  : {STREAMFLEX_TG}",
+        f"# Players   : TiviMate | OTT Navigator | NS Player | VLC | Kodi",
+        "",
+    ]
 
     grouped = group_by_category(channels)
 
@@ -247,12 +333,13 @@ def build_m3u(channels):
     unknown = sorted([c for c in grouped if c not in CATEGORY_ORDER])
     sorted_cats = known + unknown
 
+    body_lines = []
     total = 0
 
     for category in sorted_cats:
         raw_list = grouped[category]
 
-        # --- Hindi first, regional after (stable sort) ---
+        # Hindi first, regional after
         hindi_ch    = [ch for ch in raw_list if not is_regional(ch.get("name", ""))]
         regional_ch = [ch for ch in raw_list if     is_regional(ch.get("name", ""))]
         cat_channels = hindi_ch + regional_ch
@@ -260,46 +347,16 @@ def build_m3u(channels):
         print(f"  📂 {category:<20} → {len(cat_channels):>3} ch  "
               f"(Hindi: {len(hindi_ch)}, Regional: {len(regional_ch)})")
 
-        lines.append(f"# ===== {category.upper()} =====")
-        lines.append("")
+        body_lines.append(f"# ===== {category.upper()} =====")
+        body_lines.append("")
 
         for ch in cat_channels:
-            name        = ch.get("name", "Unknown").strip()
-            logo        = ch.get("logo", "").strip()
-            link        = ch.get("link", "").strip()
-            cookie      = ch.get("cookie", "").strip()
-            drm_scheme  = ch.get("drmScheme", "").strip()
-            drm_license = ch.get("drmLicense", "").strip()
+            entry = build_channel_entry(ch, category)
+            if entry:
+                body_lines.extend(entry)
+                total += 1
 
-            if not link:
-                continue
-
-            # group-title drives category folders in all players
-            extinf = f'#EXTINF:-1 tvg-name="{name}"'
-            if logo:
-                extinf += f' tvg-logo="{logo}"'
-            extinf += f' group-title="{category}",{name}'
-            lines.append(extinf)
-
-            # User-Agent (required for most streams)
-            lines.append(f'#EXTVLCOPT:http-user-agent={STREAMFLEX_UA}')
-
-            # Cookie
-            if cookie:
-                lines.append(f'#EXTVLCOPT:http-cookie={cookie}')
-
-            # DRM — ClearKey
-            if drm_scheme and drm_license:
-                if drm_scheme.lower() == "clearkey":
-                    lines.append(f'#KODIPROP:inputstream.adaptive.license_type=clearkey')
-                    lines.append(f'#KODIPROP:inputstream.adaptive.license_key={drm_license}')
-                    lines.append(f'#EXTVLCOPT:http-header=Authorization=Bearer {drm_license}')
-
-            lines.append(link)
-            lines.append("")
-            total += 1
-
-    return "\n".join(lines), total
+    return "\n".join(header_lines + body_lines), total
 
 
 # ==============================
@@ -315,7 +372,7 @@ def main():
         return
 
     print(f"✅ {len(channels)} channels fetched\n")
-    print(f"🛠  Building category-wise M3U (Hindi first, Regional after)...\n")
+    print(f"🛠  Building M3U (MPD+DRM fix, Hindi first, Regional after)...\n")
 
     m3u_content, total = build_m3u(channels)
 
@@ -323,13 +380,13 @@ def main():
     with open(out_file, "w", encoding="utf-8") as f:
         f.write(m3u_content)
 
-    print(f"\n{'='*50}")
+    print(f"\n{'='*52}")
     print(f"✅  {out_file} created!")
     print(f"📺  Total channels  : {total}")
     print(f"🏷️   Watermark       : {STREAMFLEX_WATERMARK}")
     print(f"📱  Telegram        : {STREAMFLEX_TG}")
     print(f"📡  Players         : TiviMate | OTT Navigator | NS Player | VLC | Kodi")
-    print(f"{'='*50}")
+    print(f"{'='*52}")
 
 if __name__ == "__main__":
     main()
